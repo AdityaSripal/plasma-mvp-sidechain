@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	flagTo           = "to"
-	flagPositions    = "position"
-	flagAmounts      = "amounts"
+	flagTo        = "to"
+	flagPositions = "position"
+	flagAmounts   = "amounts"
 )
 
 func init() {

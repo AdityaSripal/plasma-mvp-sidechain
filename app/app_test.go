@@ -99,20 +99,20 @@ func InitTestChain(cc *ChildChain, valAddr common.Address, addrs ...common.Addre
 
 func GenerateSimpleMsg(Owner0, NewOwner0 common.Address, position [4]uint64, amount0 uint64) types.SpendMsg {
 	return types.SpendMsg{
-		Blknum0:           position[0],
-		Txindex0:          uint16(position[1]),
-		Oindex0:           uint8(position[2]),
-		DepositNum0:       position[3],
-		Owner0:            Owner0,
-		Blknum1:           0,
-		Txindex1:          0,
-		Oindex1:           0,
-		DepositNum1:       0,
-		Owner1:            common.Address{},
-		Newowner0:         NewOwner0,
-		Amount0:           amount0,
-		Newowner1:         common.Address{},
-		Amount1:           0,
+		Blknum0:     position[0],
+		Txindex0:    uint16(position[1]),
+		Oindex0:     uint8(position[2]),
+		DepositNum0: position[3],
+		Owner0:      Owner0,
+		Blknum1:     0,
+		Txindex1:    0,
+		Oindex1:     0,
+		DepositNum1: 0,
+		Owner1:      common.Address{},
+		Newowner0:   NewOwner0,
+		Amount0:     amount0,
+		Newowner1:   common.Address{},
+		Amount1:     0,
 	}
 }
 

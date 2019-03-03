@@ -38,6 +38,5 @@ func TestSetEthConfig(t *testing.T) {
 	require.NotEqual(t, empty, cc.rootchain)
 	require.Equal(t, ethcmn.HexToAddress(plasmaContractAddr), cc.rootchain)
 
-
 	require.Equal(t, uint64(16), cc.blockFinality)
 }

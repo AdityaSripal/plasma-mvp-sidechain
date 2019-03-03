@@ -71,7 +71,6 @@ func (msg testSpendMsg) Outputs() []Output {
 	return msg.Output
 }
 
-
 func TestHandleSpendMessage(t *testing.T) {
 	const len int = 10 // number of addresses avaliable
 	var keys [len]*ecdsa.PrivateKey

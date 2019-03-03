@@ -175,10 +175,10 @@ func (plasma *Plasma) HasTXBeenExited(position [4]*big.Int) bool {
 	}
 
 	type exit struct {
-		Amount       *big.Int
-		CreatedAt    *big.Int
-		Owner        common.Address
-		State        uint8
+		Amount    *big.Int
+		CreatedAt *big.Int
+		Owner     common.Address
+		State     uint8
 	}
 
 	if !plasma.memdb.Contains(key) {

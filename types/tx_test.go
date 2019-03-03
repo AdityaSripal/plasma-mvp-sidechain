@@ -14,20 +14,20 @@ import (
 func GenBasicSpendMsg() SpendMsg {
 	// Creates Basic Spend Msg with no owners or recipients
 	return SpendMsg{
-		Blknum0:           1,
-		Txindex0:          0,
-		Oindex0:           0,
-		DepositNum0:       0,
-		Owner0:            common.Address{},
-		Blknum1:           1,
-		Txindex1:          1,
-		Oindex1:           0,
-		DepositNum1:       0,
-		Owner1:            common.Address{},
-		Newowner0:         common.Address{},
-		Amount0:           150,
-		Newowner1:         common.Address{},
-		Amount1:           50,
+		Blknum0:     1,
+		Txindex0:    0,
+		Oindex0:     0,
+		DepositNum0: 0,
+		Owner0:      common.Address{},
+		Blknum1:     1,
+		Txindex1:    1,
+		Oindex1:     0,
+		DepositNum1: 0,
+		Owner1:      common.Address{},
+		Newowner0:   common.Address{},
+		Amount0:     150,
+		Newowner1:   common.Address{},
+		Amount1:     50,
 	}
 }
 
@@ -37,20 +37,20 @@ func GenSpendMsgWithAddresses() SpendMsg {
 	privKeyB, _ := ethcrypto.GenerateKey()
 
 	return SpendMsg{
-		Blknum0:           1,
-		Txindex0:          0,
-		Oindex0:           0,
-		DepositNum0:       0,
-		Owner0:            utils.PrivKeyToAddress(privKeyA),
-		Blknum1:           1,
-		Txindex1:          1,
-		Oindex1:           0,
-		DepositNum1:       0,
-		Owner1:            utils.PrivKeyToAddress(privKeyA),
-		Newowner0:         utils.PrivKeyToAddress(privKeyB),
-		Amount0:           150,
-		Newowner1:         utils.PrivKeyToAddress(privKeyB),
-		Amount1:           50,
+		Blknum0:     1,
+		Txindex0:    0,
+		Oindex0:     0,
+		DepositNum0: 0,
+		Owner0:      utils.PrivKeyToAddress(privKeyA),
+		Blknum1:     1,
+		Txindex1:    1,
+		Oindex1:     0,
+		DepositNum1: 0,
+		Owner1:      utils.PrivKeyToAddress(privKeyA),
+		Newowner0:   utils.PrivKeyToAddress(privKeyB),
+		Amount0:     150,
+		Newowner1:   utils.PrivKeyToAddress(privKeyB),
+		Amount1:     50,
 	}
 }
 

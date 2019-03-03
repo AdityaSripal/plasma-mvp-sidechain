@@ -8,11 +8,11 @@ import (
 // UTXO is a standard unspent transaction output
 // When spent, it becomes invalid and spender keys are filled in
 type UTXO struct {
-	Address     []byte
-	Amount      uint64
-	Denom       string
-	Valid       bool
-	Position    Position
+	Address  []byte
+	Amount   uint64
+	Denom    string
+	Valid    bool
+	Position Position
 }
 
 func NewUTXO(owner []byte, amount uint64, denom string, position Position) UTXO {

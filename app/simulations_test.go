@@ -206,7 +206,6 @@ func TestUTXOExitSpend(t *testing.T) {
 
 }
 
-
 // Returns a confirmsig array signed by privKey0 and privKey1
 func CreateConfirmSig(hash []byte, privKey0, privKey1 *ecdsa.PrivateKey, two_inputs bool) (confirmSigs [][65]byte) {
 

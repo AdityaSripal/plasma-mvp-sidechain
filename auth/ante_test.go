@@ -32,30 +32,28 @@ func setup() (sdk.Context, utxo.Mapper, kvstore.KVStore) {
 	return ctx, mapper, plasmaStore
 }
 
-
 func GenSpendMsg() types.SpendMsg {
 	// Creates Basic Spend Msg with owners and recipients
 	privKeyA, _ := ethcrypto.GenerateKey()
 	privKeyB, _ := ethcrypto.GenerateKey()
 
 	return types.SpendMsg{
-		Blknum0:           1,
-		Txindex0:          0,
-		Oindex0:           0,
-		DepositNum0:       0,
-		Owner0:            utils.PrivKeyToAddress(privKeyA),
-		Blknum1:           1,
-		Txindex1:          1,
-		Oindex1:           0,
-		DepositNum1:       0,
-		Owner1:            utils.PrivKeyToAddress(privKeyA),
-		Newowner0:         utils.PrivKeyToAddress(privKeyB),
-		Amount0:           150,
-		Newowner1:         utils.PrivKeyToAddress(privKeyB),
-		Amount1:           50,
+		Blknum0:     1,
+		Txindex0:    0,
+		Oindex0:     0,
+		DepositNum0: 0,
+		Owner0:      utils.PrivKeyToAddress(privKeyA),
+		Blknum1:     1,
+		Txindex1:    1,
+		Oindex1:     0,
+		DepositNum1: 0,
+		Owner1:      utils.PrivKeyToAddress(privKeyA),
+		Newowner0:   utils.PrivKeyToAddress(privKeyB),
+		Amount0:     150,
+		Newowner1:   utils.PrivKeyToAddress(privKeyB),
+		Amount1:     50,
 	}
 }
-
 
 // helper for constructing single or double input tx
 func GetTx(msg types.SpendMsg, privKey0, privKey1 *ecdsa.PrivateKey, two_sigs bool) (tx types.BaseTx) {
@@ -228,7 +226,7 @@ func TestDifferentCases(t *testing.T) {
 
 		utxo0 := utxo.NewUTXO(tc.input0.addr.Bytes(), 2000, types.Denom, tc.input0.position)
 		mapper.ReceiveUTXO(ctx, utxo0)
-		
+
 		var utxo1 utxo.UTXO
 		if tc.input1.owner_index != -1 {
 			utxo1 = utxo.NewUTXO(tc.input1.addr.Bytes(), 2000, types.Denom, tc.input1.position)

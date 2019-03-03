@@ -12,20 +12,20 @@ import (
 var _ utxo.SpendMsg = SpendMsg{}
 
 type SpendMsg struct {
-	Blknum0           uint64
-	Txindex0          uint16
-	Oindex0           uint8
-	DepositNum0       uint64
-	Owner0            common.Address
-	Blknum1           uint64
-	Txindex1          uint16
-	Oindex1           uint8
-	DepositNum1       uint64
-	Owner1            common.Address
-	Newowner0         common.Address
-	Amount0           uint64
-	Newowner1         common.Address
-	Amount1           uint64
+	Blknum0     uint64
+	Txindex0    uint16
+	Oindex0     uint8
+	DepositNum0 uint64
+	Owner0      common.Address
+	Blknum1     uint64
+	Txindex1    uint16
+	Oindex1     uint8
+	DepositNum1 uint64
+	Owner1      common.Address
+	Newowner0   common.Address
+	Amount0     uint64
+	Newowner1   common.Address
+	Amount1     uint64
 }
 
 // Implements Msg. Improve later
@@ -109,7 +109,6 @@ func (msg SpendMsg) Outputs() []utxo.Output {
 	}
 	return outputs
 }
-
 
 //----------------------------------------
 // BaseTx
