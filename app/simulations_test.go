@@ -126,7 +126,7 @@ func TestDepositExit(t *testing.T) {
 
 	// exit deposit
 	session.TransactOpts.Value = big.NewInt(minExitBond)
-	_, err = session.StartDepositExit(big.NewInt(int64(nonce)), big.NewInt(0))
+	_, err = session.StartDepositExit(big.NewInt(int64(nonce)))
 	require.NoError(t, err)
 	time.Sleep(500 * time.Millisecond)
 
@@ -180,7 +180,6 @@ func TestUTXOExitSpend(t *testing.T) {
 	_, err = session.SubmitBlock(
 		[][32]byte{blockHash},
 		[]*big.Int{big.NewInt(1)},
-		[]*big.Int{big.NewInt(0)},
 		big.NewInt(blknum),
 	)
 	require.NoError(t, err)
@@ -191,7 +190,7 @@ func TestUTXOExitSpend(t *testing.T) {
 	confirmSigs := CreateConfirmSig(hash, privKey, &ecdsa.PrivateKey{}, false)
 
 	session.TransactOpts.Value = big.NewInt(minExitBond)
-	_, err = session.StartTransactionExit([3]*big.Int{big.NewInt(blknum), big.NewInt(0), big.NewInt(0)}, txBytes, []byte{}, confirmSigs[0][:], big.NewInt(0))
+	_, err = session.StartTransactionExit([3]*big.Int{big.NewInt(blknum), big.NewInt(0), big.NewInt(0)}, txBytes, []byte{}, confirmSigs[0][:])
 	require.NoError(t, err)
 	time.Sleep(500 * time.Millisecond)
 

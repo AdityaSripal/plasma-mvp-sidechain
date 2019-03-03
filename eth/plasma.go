@@ -93,13 +93,12 @@ func InitPlasma(contractAddr common.Address, privateKey *ecdsa.PrivateKey, clien
 }
 
 // SubmitBlock proxy. TODO: handle batching with a timmer interrupt
-func (plasma *Plasma) SubmitBlock(header [32]byte, numTxns *big.Int, fee *big.Int) (*types.Transaction, error) {
+func (plasma *Plasma) SubmitBlock(header [32]byte, numTxns *big.Int) (*types.Transaction, error) {
 	plasma.blockNum = plasma.blockNum.Add(plasma.blockNum, big.NewInt(1))
 
 	tx, err := plasma.session.SubmitBlock(
 		[][32]byte{header},
 		[]*big.Int{numTxns},
-		[]*big.Int{fee},
 		plasma.blockNum)
 
 	if err != nil {
@@ -177,7 +176,6 @@ func (plasma *Plasma) HasTXBeenExited(position [4]*big.Int) bool {
 
 	type exit struct {
 		Amount       *big.Int
-		CommittedFee *big.Int
 		CreatedAt    *big.Int
 		Owner        common.Address
 		State        uint8
