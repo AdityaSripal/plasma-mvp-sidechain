@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/FourthState/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/utils"
 )
 
 func GenBasicSpendMsg() SpendMsg {

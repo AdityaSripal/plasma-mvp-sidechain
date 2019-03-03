@@ -12,8 +12,8 @@ import (
 	crypto "github.com/tendermint/tendermint/crypto"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/FourthState/plasma-mvp-sidechain/types"
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/types"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/ethereum/go-ethereum/common"

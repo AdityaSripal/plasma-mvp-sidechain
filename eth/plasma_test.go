@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/json"
-	plasmaTypes "github.com/FourthState/plasma-mvp-sidechain/types"
+	plasmaTypes "github.com/AdityaSripal/plasma-mvp-sidechain/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"

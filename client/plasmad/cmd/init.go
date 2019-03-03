@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/FourthState/plasma-mvp-sidechain/app"
-	plasmacfg "github.com/FourthState/plasma-mvp-sidechain/client/plasmad/config"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/app"
+	plasmacfg "github.com/AdityaSripal/plasma-mvp-sidechain/client/plasmad/config"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

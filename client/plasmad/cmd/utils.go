@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/FourthState/plasma-mvp-sidechain/app"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/app"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	amino "github.com/tendermint/go-amino"

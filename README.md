@@ -1,6 +1,6 @@
 # Plasma MVP Sidechain
 
-[![license](https://img.shields.io/github/license/FourthState/plasma-mvp-rootchain.svg)](https://github.com/FourthState/plasma-mvp-sidechain/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/FourthState/plasma-mvp-rootchain.svg)](https://github.com/AdityaSripal/plasma-mvp-sidechain/blob/master/LICENSE)
 
 Branch    | Tests | Coverage
 ----------|-------|----------
@@ -22,7 +22,7 @@ We are using a UTXO model for this blockchain. This allows us to do secure and c
 
 In order to run a sidechain with tendermint consensus and a client to form transaction, a plasma node and light client will need to be initialized. 
 
-**Note**: The following assumes you have [golang](https://golang.org/) properly setup and all dependecies have already been installed. See [Contribution Guidelines](https://github.com/FourthState/plasma-mvp-sidechain/blob/master/CONTRIBUTING.md) for more information.
+**Note**: The following assumes you have [golang](https://golang.org/) properly setup and all dependecies have already been installed. See [Contribution Guidelines](https://github.com/AdityaSripal/plasma-mvp-sidechain/blob/master/CONTRIBUTING.md) for more information.
 
 Plasma Node:
 
@@ -49,7 +49,7 @@ When building the sidechain, go dep is used to manage dependencies.
 Running `dep ensure` followed by `go build` will result in the following output:
 
 ```
-# github.com/FourthState/plasma-mvp-sidechain/vendor/github.com/ethereum/go-ethereum/crypto/secp256k1
+# github.com/AdityaSripal/plasma-mvp-sidechain/vendor/github.com/ethereum/go-ethereum/crypto/secp256k1
 ../vendor/github.com/ethereum/go-ethereum/crypto/secp256k1/curve.go:42:44: fatal error: libsecp256k1/include/secp256k1.h: No such file or directory
 ```
 This is caused by a go dep issue outlined [here](https://github.com/tools/godep/issues/422).
@@ -70,7 +70,7 @@ Your vendor folder should now contain all the necessary dependencies, there is n
 See our [research repository](https://github.com/FourthState/plasma-research) for architectural explanations of our Plasma implementation. 
 
 ### Documentation
-See our [documentation](https://github.com/FourthState/plasma-mvp-sidechain/blob/master/docs/overview.md)
+See our [documentation](https://github.com/AdityaSripal/plasma-mvp-sidechain/blob/master/docs/overview.md)
 
 ### Contributing
-See our [contributing guidelines](https://github.com/FourthState/plasma-mvp-sidechain/blob/master/CONTRIBUTING.md). Join our [Discord Server](https://discord.gg/YTB5A4P).
+See our [contributing guidelines](https://github.com/AdityaSripal/plasma-mvp-sidechain/blob/master/CONTRIBUTING.md). Join our [Discord Server](https://discord.gg/YTB5A4P).

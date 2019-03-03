@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/FourthState/plasma-mvp-sidechain/client"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 

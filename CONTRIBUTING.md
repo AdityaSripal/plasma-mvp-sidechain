@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for considering making contributions to Fourth State's Plasma MVP implementation! We welcome contributions from anyone! See the [open issues](https://github.com/FourthState/plasma-mvp-sidechain/issues) for things we need help with!
+Thank you for considering making contributions to Fourth State's Plasma MVP implementation! We welcome contributions from anyone! See the [open issues](https://github.com/AdityaSripal/plasma-mvp-sidechain/issues) for things we need help with!
 
 Contribute to design discussions and conversation by joining our [Discord Server](https://discord.gg/YTB5A4P)
 
@@ -13,7 +13,7 @@ Contribute to design discussions and conversation by joining our [Discord Server
 
 Add this repository into your $GOPATH/src/github.com/FourthState directory:
 
-`go get "github.com/FourthState/plasma-mvp-sidechain"`
+`go get "github.com/AdityaSripal/plasma-mvp-sidechain"`
 
 To get dependencies:
 
@@ -27,7 +27,7 @@ To create a fork and remote branch to work on:
 
 - Create a fork on github
 
-- Go to the original repo locally (ie. `$GOPATH/src/github.com/FourthState/plasma-mvp-sidechain`)
+- Go to the original repo locally (ie. `$GOPATH/src/github.com/AdityaSripal/plasma-mvp-sidechain`)
 
 - `git remote rename origin upstream`
 

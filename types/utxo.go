@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	amino "github.com/tendermint/go-amino"

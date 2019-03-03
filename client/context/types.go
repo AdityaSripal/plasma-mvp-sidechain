@@ -1,7 +1,7 @@
 package context
 
 import (
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	"github.com/cosmos/cosmos-sdk/codec"
 	tmlite "github.com/tendermint/tendermint/lite"
 	rpcclient "github.com/tendermint/tendermint/rpc/client"

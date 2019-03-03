@@ -3,10 +3,10 @@ package cmd
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/FourthState/plasma-mvp-sidechain/client"
-	"github.com/FourthState/plasma-mvp-sidechain/client/context"
-	"github.com/FourthState/plasma-mvp-sidechain/types"
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client/context"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/types"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/cobra"
 )

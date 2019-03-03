@@ -13,7 +13,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/FourthState/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/utils"
 )
 
 func TestGenesisState(t *testing.T) {

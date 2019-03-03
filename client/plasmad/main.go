@@ -15,8 +15,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/FourthState/plasma-mvp-sidechain/app"
-	"github.com/FourthState/plasma-mvp-sidechain/client/plasmad/cmd"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/app"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client/plasmad/cmd"
 )
 
 func main() {

@@ -2,8 +2,8 @@ package types
 
 import (
 	"fmt"
-	utils "github.com/FourthState/plasma-mvp-sidechain/utils"
-	utxo "github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
+	utxo "github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	rlp "github.com/ethereum/go-ethereum/rlp"

@@ -3,10 +3,10 @@ package auth
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/FourthState/plasma-mvp-sidechain/eth"
-	types "github.com/FourthState/plasma-mvp-sidechain/types"
-	utils "github.com/FourthState/plasma-mvp-sidechain/utils"
-	"github.com/FourthState/plasma-mvp-sidechain/x/kvstore"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/eth"
+	types "github.com/AdityaSripal/plasma-mvp-sidechain/types"
+	utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/kvstore"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
@@ -15,7 +15,7 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 )
 
 // NewAnteHandler returns an AnteHandler that checks signatures,

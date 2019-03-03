@@ -11,10 +11,10 @@ import (
 	rlp "github.com/ethereum/go-ethereum/rlp"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/FourthState/plasma-mvp-sidechain/client"
-	"github.com/FourthState/plasma-mvp-sidechain/types"
-	"github.com/FourthState/plasma-mvp-sidechain/utils"
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/types"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 )
 
 // Broadcast the transaction bytes to Tendermint

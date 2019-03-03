@@ -5,8 +5,8 @@ import (
 
 	rpcclient "github.com/tendermint/tendermint/rpc/client"
 
-	"github.com/FourthState/plasma-mvp-sidechain/app"
-	"github.com/FourthState/plasma-mvp-sidechain/client"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/app"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client"
 )
 
 // Return a new context with parameters from the command line

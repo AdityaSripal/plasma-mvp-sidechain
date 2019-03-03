@@ -13,7 +13,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	utils "github.com/FourthState/plasma-mvp-sidechain/utils"
+	utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
 )
 
 /*  The following structs are used to do testing on the handler.

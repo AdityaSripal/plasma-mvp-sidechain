@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FourthState/plasma-mvp-sidechain/types"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/types"
 	"github.com/bgentry/speakeasy"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"

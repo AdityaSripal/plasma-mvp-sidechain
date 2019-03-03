@@ -9,7 +9,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/FourthState/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/utils"
 )
 
 /* structs used to test the mapper */

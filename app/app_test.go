@@ -19,9 +19,9 @@ import (
 	dbm "github.com/tendermint/tendermint/libs/db"
 	"github.com/tendermint/tendermint/libs/log"
 
-	types "github.com/FourthState/plasma-mvp-sidechain/types"
-	utils "github.com/FourthState/plasma-mvp-sidechain/utils"
-	"github.com/FourthState/plasma-mvp-sidechain/x/utxo"
+	types "github.com/AdityaSripal/plasma-mvp-sidechain/types"
+	utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	rlp "github.com/ethereum/go-ethereum/rlp"
 )
 

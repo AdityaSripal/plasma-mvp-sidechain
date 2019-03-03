@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/FourthState/plasma-mvp-sidechain/client"
-	"github.com/FourthState/plasma-mvp-sidechain/client/context"
-	"github.com/FourthState/plasma-mvp-sidechain/utils"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client/context"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/utils"
 	"github.com/ethereum/go-ethereum/common"
 	"strings"
 

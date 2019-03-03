@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/FourthState/plasma-mvp-sidechain/client/plasmad/config"
+	"github.com/AdityaSripal/plasma-mvp-sidechain/client/plasmad/config"
 	"github.com/cosmos/cosmos-sdk/server"
 	tmcmd "github.com/tendermint/tendermint/cmd/tendermint/commands"
 	tmcfg "github.com/tendermint/tendermint/config"
