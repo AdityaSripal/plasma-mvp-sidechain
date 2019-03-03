@@ -17,18 +17,15 @@ type SpendMsg struct {
 	Oindex0           uint8
 	DepositNum0       uint64
 	Owner0            common.Address
-	Input0ConfirmSigs [][65]byte
 	Blknum1           uint64
 	Txindex1          uint16
 	Oindex1           uint8
 	DepositNum1       uint64
 	Owner1            common.Address
-	Input1ConfirmSigs [][65]byte
 	Newowner0         common.Address
 	Amount0           uint64
 	Newowner1         common.Address
 	Amount1           uint64
-	FeeAmount         uint64
 }
 
 // Implements Msg. Improve later
@@ -113,12 +110,6 @@ func (msg SpendMsg) Outputs() []utxo.Output {
 	return outputs
 }
 
-func (msg SpendMsg) Fee() []utxo.Output {
-	return []utxo.Output{utxo.Output{
-		Denom:  Denom,
-		Amount: msg.FeeAmount,
-	}}
-}
 
 //----------------------------------------
 // BaseTx

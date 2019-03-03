@@ -2,7 +2,6 @@ package utxo
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto/tmhash"
 )
 
 // Return the next position for handler to store newly created UTXOs
@@ -21,16 +20,6 @@ func NewSpendHandler(um Mapper, nextPos NextPosition) sdk.Handler {
 			panic("Msg does not implement SpendMsg")
 		}
 
-		var inputKeys [][]byte
-		inputs := spendMsg.Inputs()
-		for _, in := range inputs {
-			inKey := um.ConstructKey(in.Owner, in.Position)
-			inputKeys = append(inputKeys, inKey)
-		}
-
-		txHash := tmhash.Sum(ctx.TxBytes())
-
-		var spenderKeys [][]byte
 		// Add outputs from store
 		for i, o := range spendMsg.Outputs() {
 			var next Position
@@ -39,14 +28,13 @@ func NewSpendHandler(um Mapper, nextPos NextPosition) sdk.Handler {
 			} else {
 				next = nextPos(ctx, true)
 			}
-			spenderKeys = append(spenderKeys, um.ConstructKey(o.Owner, next))
-			utxo := NewUTXOwithInputs(o.Owner, o.Amount, o.Denom, next, txHash, inputKeys)
+			utxo := NewUTXO(o.Owner, o.Amount, o.Denom, next)
 			um.ReceiveUTXO(ctx, utxo)
 		}
 
 		// Spend inputs from store
 		for _, i := range spendMsg.Inputs() {
-			err := um.SpendUTXO(ctx, i.Owner, i.Position, spenderKeys)
+			err := um.SpendUTXO(ctx, i.Owner, i.Position)
 			if err != nil {
 				return err.Result()
 			}
@@ -54,43 +42,4 @@ func NewSpendHandler(um Mapper, nextPos NextPosition) sdk.Handler {
 
 		return sdk.Result{}
 	}
-}
-
-// This function should be called within the antehandler
-// Checks that the inputs = outputs + fee and handles fee collection
-func AnteHelper(ctx sdk.Context, um Mapper, tx sdk.Tx, simulate bool, feeUpdater FeeUpdater) sdk.Error {
-	msg := tx.GetMsgs()[0]
-	spendMsg, ok := msg.(SpendMsg)
-	if !ok {
-		panic("Msg does not implement SpendMsg")
-	}
-
-	// Add up all inputs
-	totalInput := map[string]uint64{}
-	for _, i := range spendMsg.Inputs() {
-		utxo := um.GetUTXO(ctx, i.Owner, i.Position)
-		totalInput[utxo.Denom] += utxo.Amount
-	}
-
-	// Add up all outputs and fee
-	totalOutput := map[string]uint64{}
-	for _, o := range spendMsg.Outputs() {
-		totalOutput[o.Denom] += o.Amount
-	}
-	for _, fee := range spendMsg.Fee() {
-		totalOutput[fee.Denom] += fee.Amount
-	}
-
-	for denom, _ := range totalInput {
-		if totalInput[denom] != totalOutput[denom] {
-			return ErrInvalidTransaction(2, "Inputs do not equal Outputs")
-		}
-	}
-
-	// Only update fee when we are actually delivering tx
-	if !ctx.IsCheckTx() && !simulate {
-		err := feeUpdater(spendMsg.Fee())
-		return err
-	}
-	return nil
 }

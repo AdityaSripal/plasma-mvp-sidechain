@@ -19,7 +19,7 @@ import (
 	"testing"
 )
 
-func setup() (sdk.Context, utxo.Mapper, kvstore.KVStore, utxo.FeeUpdater) {
+func setup() (sdk.Context, utxo.Mapper, kvstore.KVStore) {
 	ms, capKey, plasmaCapKey := utxo.SetupMultiStore()
 
 	ctx := sdk.NewContext(ms, abci.Header{}, false, log.NewNopLogger())
@@ -29,17 +29,12 @@ func setup() (sdk.Context, utxo.Mapper, kvstore.KVStore, utxo.FeeUpdater) {
 	mapper := utxo.NewBaseMapper(capKey, cdc)
 	plasmaStore := kvstore.NewKVStore(plasmaCapKey)
 
-	return ctx, mapper, plasmaStore, feeUpdater
+	return ctx, mapper, plasmaStore
 }
 
-// should be modified when fees are implemented
-func feeUpdater(outputs []utxo.Output) sdk.Error {
-	return nil
-}
 
 func GenSpendMsg() types.SpendMsg {
 	// Creates Basic Spend Msg with owners and recipients
-	var confirmSigs [][65]byte
 	privKeyA, _ := ethcrypto.GenerateKey()
 	privKeyB, _ := ethcrypto.GenerateKey()
 
@@ -49,38 +44,18 @@ func GenSpendMsg() types.SpendMsg {
 		Oindex0:           0,
 		DepositNum0:       0,
 		Owner0:            utils.PrivKeyToAddress(privKeyA),
-		Input0ConfirmSigs: confirmSigs,
 		Blknum1:           1,
 		Txindex1:          1,
 		Oindex1:           0,
 		DepositNum1:       0,
 		Owner1:            utils.PrivKeyToAddress(privKeyA),
-		Input1ConfirmSigs: confirmSigs,
 		Newowner0:         utils.PrivKeyToAddress(privKeyB),
 		Amount0:           150,
 		Newowner1:         utils.PrivKeyToAddress(privKeyB),
 		Amount1:           50,
-		FeeAmount:         0,
 	}
 }
 
-// Returns a confirmsig array signed by privKey0 and privKey1
-func CreateConfirmSig(hash []byte, privKey0, privKey1 *ecdsa.PrivateKey, two_inputs bool) (confirmSigs [][65]byte) {
-
-	var confirmSig0 [65]byte
-	signHash := utils.SignHash(hash)
-	confirmSig0Slice, _ := ethcrypto.Sign(signHash, privKey0)
-	copy(confirmSig0[:], confirmSig0Slice)
-	if !two_inputs {
-		return [][65]byte{confirmSig0}
-	}
-
-	var confirmSig1 [65]byte
-	confirmSig1Slice, _ := ethcrypto.Sign(signHash, privKey1)
-	copy(confirmSig1[:], confirmSig1Slice)
-
-	return [][65]byte{confirmSig0, confirmSig1}
-}
 
 // helper for constructing single or double input tx
 func GetTx(msg types.SpendMsg, privKey0, privKey1 *ecdsa.PrivateKey, two_sigs bool) (tx types.BaseTx) {
@@ -111,7 +86,7 @@ func getInputAddr(addr0, addr1 common.Address, two bool) [][]byte {
 
 // No signatures are provided
 func TestNoSigs(t *testing.T) {
-	ctx, mapper, plasmaStore, feeUpdater := setup()
+	ctx, mapper, plasmaStore := setup()
 
 	var msg = GenSpendMsg()
 	var emptysigs [2][65]byte
@@ -123,7 +98,7 @@ func TestNoSigs(t *testing.T) {
 	mapper.ReceiveUTXO(ctx, utxo1)
 	mapper.ReceiveUTXO(ctx, utxo2)
 
-	handler := NewAnteHandler(mapper, plasmaStore, feeUpdater, nil)
+	handler := NewAnteHandler(mapper, plasmaStore, nil)
 	_, res, abort := handler(ctx, tx, false)
 
 	assert.Equal(t, true, abort, "did not abort with no signatures")
@@ -132,7 +107,7 @@ func TestNoSigs(t *testing.T) {
 
 // The wrong amount of signatures are provided
 func TestNotEnoughSigs(t *testing.T) {
-	ctx, mapper, plasmaStore, feeUpdater := setup()
+	ctx, mapper, plasmaStore := setup()
 
 	var msg = GenSpendMsg()
 	priv, _ := ethcrypto.GenerateKey()
@@ -148,35 +123,11 @@ func TestNotEnoughSigs(t *testing.T) {
 	mapper.ReceiveUTXO(ctx, utxo1)
 	mapper.ReceiveUTXO(ctx, utxo2)
 
-	handler := NewAnteHandler(mapper, plasmaStore, feeUpdater, nil)
+	handler := NewAnteHandler(mapper, plasmaStore, nil)
 	_, res, abort := handler(ctx, tx, false)
 
 	assert.Equal(t, true, abort, "did not abort with incorrect number of signatures")
 	require.Equal(t, sdk.ToABCICode(sdk.CodespaceType(1), sdk.CodeType(4)), res.Code, fmt.Sprintf("tx had processed with incorrect number of signatures: %s", res.Log))
-}
-
-func TestInvalidFee(t *testing.T) {
-	ctx, mapper, plasmaStore, feeUpdater := setup()
-
-	var inputAmount uint64 = 1001
-
-	// sigs not needed since fee amount should be checked with existence check
-	var msg = GenSpendMsg()
-	var sigs [2][65]byte
-	msg.FeeAmount = inputAmount + 1
-	tx := types.NewBaseTx(msg, sigs)
-
-	// Add input UTXOs to mapper
-	utxo1 := utxo.NewUTXO(msg.Owner0.Bytes(), inputAmount, types.Denom, types.NewPlasmaPosition(1, 0, 0, 0))
-	utxo2 := utxo.NewUTXO(msg.Owner0.Bytes(), inputAmount, types.Denom, types.NewPlasmaPosition(1, 1, 0, 0))
-	mapper.ReceiveUTXO(ctx, utxo1)
-	mapper.ReceiveUTXO(ctx, utxo2)
-
-	handler := NewAnteHandler(mapper, plasmaStore, feeUpdater, nil)
-	_, res, abort := handler(ctx, tx, false)
-
-	assert.Equal(t, true, abort, "did not abort with incorrect fee amount")
-	require.Equal(t, sdk.ToABCICode(sdk.CodespaceType(3), sdk.CodeType(204)), res.Code, "tx had processed with a fee amount greater than first input amount")
 }
 
 // helper struct for readability
@@ -190,7 +141,7 @@ type input struct {
 
 // Tests a different cases.
 func TestDifferentCases(t *testing.T) {
-	ctx, mapper, plasmaStore, feeUpdater := setup()
+	ctx, mapper, plasmaStore := setup()
 
 	var keys [6]*ecdsa.PrivateKey
 	var addrs []common.Address
@@ -247,10 +198,6 @@ func TestDifferentCases(t *testing.T) {
 	}
 
 	for index, tc := range cases {
-		input0_index1 := utils.GetIndex(tc.input0.input_index1)
-		input1_index0 := utils.GetIndex(tc.input1.input_index0)
-		input1_index1 := utils.GetIndex(tc.input1.input_index1)
-
 		// for ease of testing, blockHash is hash of case number
 		blockHash := tmhash.Sum([]byte(string(index)))
 		var msg = types.SpendMsg{
@@ -267,29 +214,25 @@ func TestDifferentCases(t *testing.T) {
 			Newowner0:   tc.newowner0,
 			Amount0:     tc.amount0,
 			Newowner1:   tc.newowner1,
-			Amount1:     tc.amount1 - 5,
-			FeeAmount:   5,
+			Amount1:     tc.amount1,
 		}
 
 		owner_index1 := utils.GetIndex(tc.input1.owner_index)
 		tx := GetTx(msg, keys[tc.input0.owner_index], keys[owner_index1], tc.input1.owner_index != -1)
 
-		handler := NewAnteHandler(mapper, plasmaStore, feeUpdater, nil)
+		handler := NewAnteHandler(mapper, plasmaStore, nil)
 		_, res, abort := handler(ctx, tx, false)
 
 		assert.Equal(t, true, abort, fmt.Sprintf("did not abort on utxo that does not exist. Case: %d", index))
 		require.Equal(t, sdk.ToABCICode(sdk.CodespaceType(1), sdk.CodeType(6)), res.Code, res.Log)
 
-		inputAddr := getInputAddr(addrs[tc.input0.input_index0], addrs[input0_index1], tc.input0.input_index1 != -1)
-		txhash0 := tmhash.Sum([]byte("first utxo"))
-		utxo0 := utxo.NewUTXOwithInputs(tc.input0.addr.Bytes(), 2000, types.Denom, tc.input0.position, txhash0, inputAddr)
-
+		utxo0 := utxo.NewUTXO(tc.input0.addr.Bytes(), 2000, types.Denom, tc.input0.position)
+		mapper.ReceiveUTXO(ctx, utxo0)
+		
 		var utxo1 utxo.UTXO
-		var txhash1 []byte
 		if tc.input1.owner_index != -1 {
-			txhash1 = tmhash.Sum([]byte("second utxo"))
-			inputAddr = getInputAddr(addrs[input1_index0], addrs[input1_index1], tc.input0.input_index1 != -1)
-			utxo1 = utxo.NewUTXOwithInputs(tc.input1.addr.Bytes(), 2000, types.Denom, tc.input1.position, txhash1, inputAddr)
+			utxo1 = utxo.NewUTXO(tc.input1.addr.Bytes(), 2000, types.Denom, tc.input1.position)
+			mapper.ReceiveUTXO(ctx, utxo1)
 		}
 
 		blknumKey := make([]byte, binary.MaxVarintLen64)
@@ -299,14 +242,6 @@ func TestDifferentCases(t *testing.T) {
 
 		// for ease of testing, txhash is simplified
 		// app_test tests for correct functionality when setting tx_hash
-		mapper.ReceiveUTXO(ctx, utxo0)
-		hash := tmhash.Sum(append(txhash0, blockHash...))
-		msg.Input0ConfirmSigs = CreateConfirmSig(hash, keys[tc.input0.input_index0], keys[input0_index1], tc.input0.input_index1 != -1)
-		if tc.input1.owner_index != -1 {
-			hash = tmhash.Sum(append(txhash1, blockHash...))
-			mapper.ReceiveUTXO(ctx, utxo1)
-			msg.Input1ConfirmSigs = CreateConfirmSig(hash, keys[input1_index0], keys[input1_index1], tc.input1.input_index1 != -1)
-		}
 		tx = GetTx(msg, keys[tc.input0.owner_index], keys[owner_index1], tc.input1.owner_index != -1)
 		_, res, abort = handler(ctx, tx, false)
 

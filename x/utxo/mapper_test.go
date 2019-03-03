@@ -75,10 +75,9 @@ func TestUTXOGetReceiveSpend(t *testing.T) {
 	require.True(t, received.Valid, "output UTXO is not valid")
 	require.Equal(t, utxo, received, "not equal after receive")
 
-	mapper.SpendUTXO(ctx, addr.Bytes(), position, [][]byte{[]byte("spenderKey")})
+	mapper.SpendUTXO(ctx, addr.Bytes(), position)
 	utxo = mapper.GetUTXO(ctx, addr.Bytes(), position)
 	require.False(t, utxo.Valid, "Spent UTXO is still valid")
-	require.Equal(t, utxo.SpenderKeys, [][]byte{[]byte("spenderKey")})
 }
 
 /*
@@ -111,10 +110,9 @@ func TestMultiUTXOAddDeleteSameBlock(t *testing.T) {
 		position := newTestPosition([]uint64{uint64(i%4) + 1, uint64(i / 4), 0})
 
 		utxo := mapper.GetUTXO(ctx, addr.Bytes(), position)
-		mapper.SpendUTXO(ctx, addr.Bytes(), position, [][]byte{[]byte("spenderKey")})
+		mapper.SpendUTXO(ctx, addr.Bytes(), position)
 		utxo = mapper.GetUTXO(ctx, addr.Bytes(), position)
 		require.False(t, utxo.Valid, "Spent UTXO is still valid")
-		require.Equal(t, utxo.SpenderKeys, [][]byte{[]byte("spenderKey")})
 	}
 
 }
@@ -150,15 +148,13 @@ func TestInvalidAddress(t *testing.T) {
 	utxo = mapper.GetUTXO(ctx, addr0.Bytes(), position)
 
 	// SpendUTXO with correct position but wrong address
-	mapper.SpendUTXO(ctx, addr1.Bytes(), position, [][]byte{[]byte("spenderKey")})
+	mapper.SpendUTXO(ctx, addr1.Bytes(), position)
 	utxo = mapper.GetUTXO(ctx, addr0.Bytes(), position)
 	require.True(t, utxo.Valid, "UTXO invalid after invalid spend")
-	require.Nil(t, utxo.SpenderKeys, "UTXO has spenderKeys set after invalid spend")
 
-	mapper.SpendUTXO(ctx, addr0.Bytes(), position, [][]byte{[]byte("spenderKey")})
+	mapper.SpendUTXO(ctx, addr0.Bytes(), position)
 	utxo = mapper.GetUTXO(ctx, addr0.Bytes(), position)
 	require.False(t, utxo.Valid, "UTXO still valid after valid spend")
-	require.Equal(t, utxo.SpenderKeys, [][]byte{[]byte("spenderKey")}, "UTXO doesn't have spenderKeys set after valid spend")
 }
 
 func TestSpendInvalidUTXO(t *testing.T) {
@@ -180,44 +176,15 @@ func TestSpendInvalidUTXO(t *testing.T) {
 
 	mapper.InvalidateUTXO(ctx, utxo)
 
-	err := mapper.SpendUTXO(ctx, addr.Bytes(), position, [][]byte{[]byte("spenderKey")})
+	err := mapper.SpendUTXO(ctx, addr.Bytes(), position)
 
 	utxo = mapper.GetUTXO(ctx, addr.Bytes(), position)
 	require.NotNil(t, err, "Allowed invalid UTXO to be spent")
-	require.Nil(t, utxo.SpenderKeys, "UTXO mutated after invalid spend")
 
 	mapper.ValidateUTXO(ctx, utxo)
-	err = mapper.SpendUTXO(ctx, addr.Bytes(), position, [][]byte{[]byte("spenderKey")})
+	err = mapper.SpendUTXO(ctx, addr.Bytes(), position)
 
 	utxo = mapper.GetUTXO(ctx, addr.Bytes(), position)
 	require.Nil(t, err, "Spend of valid UTXO errorred")
 	require.False(t, utxo.Valid, "Spent UTXO is still valid")
-	require.Equal(t, utxo.SpenderKeys, [][]byte{[]byte("spenderKey")}, "UTXO doesn't have spenderKeys set after valid spend")
-}
-
-func TestUTXOMethods(t *testing.T) {
-	_, capKey, _ := SetupMultiStore()
-
-	cdc := MakeCodec()
-	cdc.RegisterConcrete(testPosition{}, "x/utxo/testPosition", nil)
-	mapper := NewBaseMapper(capKey, cdc)
-
-	addr1 := []byte("12345")
-	addr2 := []byte("13579")
-	addr3 := []byte("67890")
-
-	outputPos1 := testPosition{7, 8, 9}
-	outputPos2 := testPosition{3, 4, 5}
-
-	outputKey1 := mapper.ConstructKey(addr1, outputPos1)
-	outputKey2 := mapper.ConstructKey(addr2, outputPos2)
-
-	testUTXO := NewUTXO(addr3, 100, "Ether", testPosition{0, 1, 2})
-	testUTXO.SpenderKeys = [][]byte{outputKey1, outputKey2}
-
-	addrs := testUTXO.SpenderAddresses()
-	require.Equal(t, [][]byte{addr1, addr2}, addrs, "Spender addresses are not correct")
-
-	positions := testUTXO.SpenderPositions(cdc, testProtoPosition)
-	require.Equal(t, []Position{&outputPos1, &outputPos2}, positions, "Spender position not correct")
 }

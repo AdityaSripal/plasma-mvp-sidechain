@@ -23,7 +23,7 @@ func TestGenesisState(t *testing.T) {
 	privkeyFile.Write([]byte(privkey))
 	defer os.Remove(privkeyFile.Name())
 
-	app := NewChildChain(logger, db, nil, SetEthConfig(true, privkeyFile.Name(), plasmaContractAddr, nodeURL, "0", "5"))
+	app := NewChildChain(logger, db, nil, SetEthConfig(true, privkeyFile.Name(), plasmaContractAddr, nodeURL, "5"))
 
 	addrs := []common.Address{utils.GenerateAddress(), utils.GenerateAddress()}
 

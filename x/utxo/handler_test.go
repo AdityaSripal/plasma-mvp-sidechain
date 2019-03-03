@@ -39,7 +39,6 @@ var _ SpendMsg = testSpendMsg{}
 type testSpendMsg struct {
 	Input  []Input
 	Output []Output
-	Fees   Output
 }
 
 func (msg testSpendMsg) Type() string { return "spend_utxo" }
@@ -72,9 +71,6 @@ func (msg testSpendMsg) Outputs() []Output {
 	return msg.Output
 }
 
-func (msg testSpendMsg) Fee() []Output {
-	return []Output{msg.Fees}
-}
 
 func TestHandleSpendMessage(t *testing.T) {
 	const len int = 10 // number of addresses avaliable
@@ -112,8 +108,6 @@ func TestHandleSpendMessage(t *testing.T) {
 		ctx := sdk.NewContext(ms, abci.Header{Height: 6}, false, log.NewNopLogger())
 		var inputs []Input
 		var outputs []Output
-		var inputKeys [][]byte
-		var spenderKeys [][]byte
 
 		// Add utxo's that will be spent
 		for i := 0; i < tc.inputNum; i++ {
@@ -125,20 +119,16 @@ func TestHandleSpendMessage(t *testing.T) {
 			require.NotNil(t, utxo)
 
 			inputs = append(inputs, Input{addrs[i].Bytes(), position})
-			inputKeys = append(inputKeys, mapper.ConstructKey(addrs[i].Bytes(), position))
 		}
 
 		for i := 0; i < tc.outputNum; i++ {
 			outputs = append(outputs, Output{addrs[(i+1)%len].Bytes(), "Ether", uint64((100 * tc.inputNum) / tc.outputNum)})
-			position := newTestPosition([]uint64{6, 0, uint64(i)})
-			spenderKeys = append(spenderKeys, mapper.ConstructKey(addrs[(i+1)%len].Bytes(), position))
 		}
 
 		// Create spend msg
 		msg := testSpendMsg{
 			Input:  inputs,
 			Output: outputs,
-			Fees:   Output{[]byte{}, "Ether", 100},
 		}
 
 		res := handler(ctx, msg)
@@ -149,7 +139,6 @@ func TestHandleSpendMessage(t *testing.T) {
 			utxo := mapper.GetUTXO(ctx, in.Owner, in.Position)
 			require.NotNil(t, utxo)
 			require.False(t, utxo.Valid, "Spent UTXO not valid")
-			require.Equal(t, spenderKeys, utxo.SpenderKeys, "Spender keys not set properly for inputs")
 		}
 
 		// Check that outputs were created and are valid
@@ -162,7 +151,6 @@ func TestHandleSpendMessage(t *testing.T) {
 			require.Equal(t, uint64((tc.inputNum*100)/tc.outputNum), utxo.Amount)
 			require.EqualValues(t, addrs[(i+1)%len].Bytes(), utxo.Address)
 			require.True(t, utxo.Valid, "Output UTXO is not valid")
-			require.Equal(t, inputKeys, utxo.InputKeys, "Input keys for new outputs not set properly")
 		}
 	}
 }

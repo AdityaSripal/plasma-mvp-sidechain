@@ -26,7 +26,7 @@ func TestSetEthConfig(t *testing.T) {
 	db := dbm.NewMemDB()
 	logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout)).With("module", "main")
 	cc := NewChildChain(logger, db, nil,
-		SetEthConfig(true, privkey_file.Name(), plasmaContractAddr, nodeURL, "200", "16"),
+		SetEthConfig(true, privkey_file.Name(), plasmaContractAddr, nodeURL, "16"),
 	)
 
 	private_key, _ := crypto.LoadECDSA(privkey_file.Name())
@@ -38,7 +38,6 @@ func TestSetEthConfig(t *testing.T) {
 	require.NotEqual(t, empty, cc.rootchain)
 	require.Equal(t, ethcmn.HexToAddress(plasmaContractAddr), cc.rootchain)
 
-	require.Equal(t, uint64(200), cc.minFees)
 
 	require.Equal(t, uint64(16), cc.blockFinality)
 }

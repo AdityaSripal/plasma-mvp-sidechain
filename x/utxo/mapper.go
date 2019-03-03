@@ -13,7 +13,7 @@ type Mapper interface {
 	ReceiveUTXO(sdk.Context, UTXO)
 	ValidateUTXO(sdk.Context, UTXO) sdk.Error
 	InvalidateUTXO(sdk.Context, UTXO)
-	SpendUTXO(ctx sdk.Context, addr []byte, position Position, spenderKeys [][]byte) sdk.Error
+	SpendUTXO(ctx sdk.Context, addr []byte, position Position) sdk.Error
 }
 
 // Maps Address+Position to UTXO
@@ -59,7 +59,7 @@ func (um baseMapper) ReceiveUTXO(ctx sdk.Context, utxo UTXO) {
 }
 
 // Spend UTXO corresponding to address + position from mapping
-func (um baseMapper) SpendUTXO(ctx sdk.Context, addr []byte, position Position, spenderKeys [][]byte) sdk.Error {
+func (um baseMapper) SpendUTXO(ctx sdk.Context, addr []byte, position Position) sdk.Error {
 	store := ctx.KVStore(um.contextKey)
 	key := um.ConstructKey(addr, position)
 	utxo := um.GetUTXO(ctx, addr, position)
@@ -67,7 +67,6 @@ func (um baseMapper) SpendUTXO(ctx sdk.Context, addr []byte, position Position, 
 		return sdk.ErrUnauthorized("UTXO is not valid for spend")
 	}
 	utxo.Valid = false
-	utxo.SpenderKeys = spenderKeys
 	encodedUTXO := um.encodeUTXO(utxo)
 	store.Set(key, encodedUTXO)
 	return nil
@@ -77,9 +76,6 @@ func (um baseMapper) SpendUTXO(ctx sdk.Context, addr []byte, position Position, 
 func (um baseMapper) ValidateUTXO(ctx sdk.Context, utxo UTXO) sdk.Error {
 	store := ctx.KVStore(um.contextKey)
 	key := utxo.StoreKey(um.cdc)
-	if utxo.SpenderKeys != nil {
-		return sdk.ErrUnauthorized("Cannot validate spent UTXO")
-	}
 	utxo.Valid = true
 	encodedUTXO := um.encodeUTXO(utxo)
 	store.Set(key, encodedUTXO)

@@ -38,8 +38,6 @@ type ChildChain struct {
 
 	txIndex uint16
 
-	feeAmount uint64
-
 	// keys to access the substores
 	capKeyMainStore *sdk.KVStoreKey
 
@@ -65,9 +63,6 @@ type ChildChain struct {
 	// NodeURL for connecting to ethereum client
 	nodeURL string
 
-	// Minimum Fee a validator is willing to accept
-	minFees uint64
-
 	// Number of blocks required for a submitted block to be considered final
 	blockFinality uint64
 
@@ -84,7 +79,6 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 		BaseApp:           bapp,
 		cdc:               cdc,
 		txIndex:           0,
-		feeAmount:         0,
 		capKeyMainStore:   sdk.NewKVStoreKey("main"),
 		capKeyPlasmaStore: sdk.NewKVStoreKey("plasma"),
 	}
@@ -126,7 +120,7 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 	app.ethConnection = plasmaClient
 
 	// NOTE: type AnteHandler func(ctx Context, tx Tx) (newCtx Context, result Result, abort bool)
-	app.SetAnteHandler(auth.NewAnteHandler(app.utxoMapper, app.plasmaStore, app.feeUpdater, app.ethConnection))
+	app.SetAnteHandler(auth.NewAnteHandler(app.utxoMapper, app.plasmaStore, app.ethConnection))
 
 	err = app.LoadLatestVersion(app.capKeyMainStore)
 	if err != nil {
@@ -167,20 +161,8 @@ func (app *ChildChain) initChainer(ctx sdk.Context, req abci.RequestInitChain) a
 }
 
 func (app *ChildChain) endBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
-	if app.feeAmount != 0 {
-		position := types.PlasmaPosition{
-			Blknum:     uint64(ctx.BlockHeight()),
-			TxIndex:    uint16(1<<16 - 1),
-			Oindex:     0,
-			DepositNum: 0,
-		}
-		utxo := utxo.NewUTXO(app.validatorAddress.Bytes(), app.feeAmount, types.Denom, position)
-		app.utxoMapper.ReceiveUTXO(ctx, utxo)
-	}
-
 	// reset txIndex and fee
 	app.txIndex = 0
-	app.feeAmount = 0
 
 	blknumKey := make([]byte, binary.MaxVarintLen64)
 	binary.PutUvarint(blknumKey, uint64(ctx.BlockHeight()))
@@ -210,15 +192,6 @@ func (app *ChildChain) nextPosition(ctx sdk.Context, secondary bool) utxo.Positi
 		return types.NewPlasmaPosition(uint64(ctx.BlockHeight()), app.txIndex-1, 0, 0)
 	}
 	return types.NewPlasmaPosition(uint64(ctx.BlockHeight()), app.txIndex-1, 1, 0)
-}
-
-// Fee Updater passed into antehandler
-func (app *ChildChain) feeUpdater(output []utxo.Output) sdk.Error {
-	if len(output) != 1 || output[0].Denom != types.Denom {
-		return utxo.ErrInvalidFee(2, "Fee must be paid in Eth")
-	}
-	app.feeAmount += output[0].Amount
-	return nil
 }
 
 func MakeCodec() *amino.Codec {

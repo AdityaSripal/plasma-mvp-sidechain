@@ -10,10 +10,9 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func SetEthConfig(isValidator bool, privkeyFile, rootchainAddr, nodeURL, minFeesStr, finality string) func(*ChildChain) {
+func SetEthConfig(isValidator bool, privkeyFile, rootchainAddr, nodeURL, finality string) func(*ChildChain) {
 	var privkey *ecdsa.PrivateKey
 	var rootchain ethcmn.Address
-	var minFees uint64
 	var blockFinality uint64
 
 	if isValidator {
@@ -29,10 +28,6 @@ func SetEthConfig(isValidator bool, privkeyFile, rootchainAddr, nodeURL, minFees
 			panic(errMsg)
 		}
 
-		minFees, err = strconv.ParseUint(minFeesStr, 10, 64)
-		if err != nil {
-			panic(err)
-		}
 	}
 	blockFinality, err := strconv.ParseUint(finality, 10, 64)
 	if err != nil {
@@ -45,7 +40,6 @@ func SetEthConfig(isValidator bool, privkeyFile, rootchainAddr, nodeURL, minFees
 		cc.isValidator = isValidator
 		cc.rootchain = rootchain
 		cc.nodeURL = nodeURL
-		cc.minFees = minFees
 		cc.blockFinality = blockFinality
 	}
 }

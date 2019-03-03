@@ -94,7 +94,7 @@ func TestDepositAndSpend(t *testing.T) {
 	// Spend Deposit
 	privKeyB, _ := ethcrypto.GenerateKey()
 	addrB := utils.PrivKeyToAddress(privKeyB)
-	msg := GenerateSimpleMsg(addrA, addrB, [4]uint64{0, 0, 0, nonce}, 100, 0)
+	msg := GenerateSimpleMsg(addrA, addrB, [4]uint64{0, 0, 0, nonce}, 100)
 	tx := GetTx(msg, privKey, nil, false)
 	txBytes, _ := rlp.EncodeToBytes(tx)
 
@@ -113,9 +113,7 @@ func TestDepositAndSpend(t *testing.T) {
 	position := types.NewPlasmaPosition(1, 0, 0, 0)
 	res := cc.utxoMapper.GetUTXO(ctx, addrB.Bytes(), position)
 
-	inputKey := cc.utxoMapper.ConstructKey(addrA.Bytes(), types.NewPlasmaPosition(0, 0, 0, nonce))
-	txHash := tmhash.Sum(txBytes)
-	expected := utxo.NewUTXOwithInputs(addrB.Bytes(), 100, "Ether", position, txHash, [][]byte{inputKey})
+	expected := utxo.NewUTXO(addrB.Bytes(), 100, "Ether", position)
 
 	require.Equal(t, expected, res, "UTXO did not get added to store correctly")
 }
@@ -135,7 +133,7 @@ func TestDepositExit(t *testing.T) {
 	// attempt spend
 	privKeyB, _ := ethcrypto.GenerateKey()
 	addrB := utils.PrivKeyToAddress(privKeyB)
-	msg := GenerateSimpleMsg(addrA, addrB, [4]uint64{0, 0, 0, nonce}, 100, 0)
+	msg := GenerateSimpleMsg(addrA, addrB, [4]uint64{0, 0, 0, nonce}, 100)
 	tx := GetTx(msg, privKey, nil, false)
 	txBytes, _ := rlp.EncodeToBytes(tx)
 
@@ -155,7 +153,7 @@ func TestUTXOExitSpend(t *testing.T) {
 	require.NoError(t, err)
 
 	// Spend Deposit
-	msg := GenerateSimpleMsg(addrA, addrA, [4]uint64{0, 0, 0, nonce}, 100, 0)
+	msg := GenerateSimpleMsg(addrA, addrA, [4]uint64{0, 0, 0, nonce}, 100)
 	tx := GetTx(msg, privKey, nil, false)
 	txBytes, _ := rlp.EncodeToBytes(tx)
 
@@ -197,8 +195,7 @@ func TestUTXOExitSpend(t *testing.T) {
 	require.NoError(t, err)
 	time.Sleep(500 * time.Millisecond)
 
-	msg = GenerateSimpleMsg(addrA, addrA, [4]uint64{uint64(blknum), 0, 0, 0}, 100, 0)
-	msg.Input0ConfirmSigs = confirmSigs
+	msg = GenerateSimpleMsg(addrA, addrA, [4]uint64{uint64(blknum), 0, 0, 0}, 100)
 
 	tx = GetTx(msg, privKey, nil, false)
 	txBytes, _ = rlp.EncodeToBytes(tx)
@@ -208,4 +205,23 @@ func TestUTXOExitSpend(t *testing.T) {
 
 	require.Equal(t, sdk.CodeType(204), sdk.CodeType(dres.Code), dres.Log)
 
+}
+
+
+// Returns a confirmsig array signed by privKey0 and privKey1
+func CreateConfirmSig(hash []byte, privKey0, privKey1 *ecdsa.PrivateKey, two_inputs bool) (confirmSigs [][65]byte) {
+
+	var confirmSig0 [65]byte
+	signHash := utils.SignHash(hash)
+	confirmSig0Slice, _ := ethcrypto.Sign(signHash, privKey0)
+	copy(confirmSig0[:], confirmSig0Slice)
+	confirmSigs = append(confirmSigs, confirmSig0)
+
+	var confirmSig1 [65]byte
+	if two_inputs {
+		confirmSig1Slice, _ := ethcrypto.Sign(signHash, privKey1)
+		copy(confirmSig1[:], confirmSig1Slice)
+		confirmSigs = append(confirmSigs, confirmSig1)
+	}
+	return confirmSigs
 }
