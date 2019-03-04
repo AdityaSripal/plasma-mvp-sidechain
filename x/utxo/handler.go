@@ -9,10 +9,9 @@ import (
 // If false, NextPosition will increment position to accomadate outputs for a new transaction
 type NextPosition func(ctx sdk.Context, secondary bool) Position
 
-// User-defined fee update function
-type FeeUpdater func([]Output) sdk.Error
-
 // Handler handles spends of arbitrary utxo implementation
+// The handler will take SpendMsg and apply the appropriate state changes
+// No need to have checks here since that is done before in AnteHandler.
 func NewSpendHandler(um Mapper, nextPos NextPosition) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		spendMsg, ok := msg.(SpendMsg)
@@ -20,25 +19,9 @@ func NewSpendHandler(um Mapper, nextPos NextPosition) sdk.Handler {
 			panic("Msg does not implement SpendMsg")
 		}
 
-		// Add outputs from store
-		for i, o := range spendMsg.Outputs() {
-			var next Position
-			if i == 0 {
-				next = nextPos(ctx, false)
-			} else {
-				next = nextPos(ctx, true)
-			}
-			utxo := NewUTXO(o.Owner, o.Amount, o.Denom, next)
-			um.ReceiveUTXO(ctx, utxo)
-		}
+		// TODO: Spend all input UTXOs
 
-		// Spend inputs from store
-		for _, i := range spendMsg.Inputs() {
-			err := um.SpendUTXO(ctx, i.Owner, i.Position)
-			if err != nil {
-				return err.Result()
-			}
-		}
+		// TODO: Create new Unspent Transaction Outputs and save them in store
 
 		return sdk.Result{}
 	}

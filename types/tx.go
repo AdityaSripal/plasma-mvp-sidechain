@@ -1,70 +1,45 @@
 package types
 
 import (
-	"fmt"
-	utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
-	utxo "github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
+	// "fmt"
+	// utils "github.com/AdityaSripal/plasma-mvp-sidechain/utils"
+	// utxo "github.com/AdityaSripal/plasma-mvp-sidechain/x/utxo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/ethereum/go-ethereum/common"
+	// "github.com/ethereum/go-ethereum/common"
 	rlp "github.com/ethereum/go-ethereum/rlp"
 )
 
-var _ utxo.SpendMsg = SpendMsg{}
+// var _ utxo.SpendMsg = SpendMsg{}
 
+/*
+ * SpendMsg contains all the data that a user submits to the Plasma state in order to spend his/her UTXOs
+ * No authentication fields are enclosed within
+ * In the FourthState implementation, a SpendMsg can spend a maximum of 2 UTXOs and create a maximum of 2 UTXOs
+ * The first input must always be filled in.
+ * Each UTXO is specified by its position (BlockNum, TxIndex, OIndex, DepositNum). Where BlockNum is the block at which
+ * UTXO was created. TxIndex is the index inside the block's transaction list where UTXO was created. OIndex is
+ * either 0 or 1 to denote whether the UTXO specified was the first or second output of the transaction.
+ * In regular transaction UTXOs, the first 2 fields are filled in and DepositNum is 0.
+ * If the UTXO is a deposit UTXO, then first 3 fields are 0 and DepositNum corresponds to the deposit nonce on rootchain
+ * SpendMsg implements sdk.Msg and utxo.SpendMsg
+*/
 type SpendMsg struct {
-	Blknum0     uint64
-	Txindex0    uint16
-	Oindex0     uint8
-	DepositNum0 uint64
-	Owner0      common.Address
-	Blknum1     uint64
-	Txindex1    uint16
-	Oindex1     uint8
-	DepositNum1 uint64
-	Owner1      common.Address
-	Newowner0   common.Address
-	Amount0     uint64
-	Newowner1   common.Address
-	Amount1     uint64
+	// TODO: fill in fields
 }
 
-// Implements Msg. Improve later
+// Implements sdk.Msg. Improve later
 func (msg SpendMsg) Type() string { return "spend_utxo" }
 
-// Implements Msg.
+// Implements sdk.Msg.
 func (msg SpendMsg) Route() string { return "spend" }
 
-// Implements Msg.
+/*
+ * Implements sdk.Msg
+ * Performs Basic stateless validation of our message
+ * What would constitute an invalid (or malformed) message?
+*/
 func (msg SpendMsg) ValidateBasic() sdk.Error {
-	if !utils.ValidAddress(msg.Owner0) {
-		return ErrInvalidAddress(DefaultCodespace, "input owner must have a valid address", msg.Owner0)
-	}
-	if !utils.ValidAddress(msg.Newowner0) {
-		return ErrInvalidAddress(DefaultCodespace, "no recipients of transaction")
-	}
-	if msg.Blknum0 == msg.Blknum1 && msg.Txindex0 == msg.Txindex1 && msg.Oindex0 == msg.Oindex1 && msg.DepositNum0 == msg.DepositNum1 {
-		return ErrInvalidTransaction(DefaultCodespace, fmt.Sprintf("cannot spend same position twice: (%d, %d, %d, %d)", msg.Blknum0, msg.Txindex0, msg.Oindex0, msg.DepositNum0))
-
-	}
-
-	switch {
-
-	case msg.Oindex0 != 0 && msg.Oindex0 != 1:
-		return ErrInvalidOIndex(DefaultCodespace, "output index 0 must be either 0 or 1")
-
-	case msg.DepositNum0 != 0 && (msg.Blknum0 != 0 || msg.Txindex0 != 0 || msg.Oindex0 != 0):
-		return ErrInvalidTransaction(DefaultCodespace, "first input is malformed. Deposit's position must be 0, 0, 0")
-
-	case msg.DepositNum1 != 0 && (msg.Blknum1 != 0 || msg.Txindex1 != 0 || msg.Oindex1 != 0):
-		return ErrInvalidTransaction(DefaultCodespace, "second input is malformed. Deposit's position must be 0, 0, 0")
-
-	case msg.Blknum1 != 0 && msg.Oindex1 != 0 && msg.Oindex1 != 1:
-		return ErrInvalidOIndex(DefaultCodespace, "output index 1 must be either 0 or 1")
-
-	case msg.Amount0 == 0:
-		return ErrInvalidAmount(DefaultCodespace, "first amount must be positive")
-	}
-
+    // TODO: Implement ValidateBasic to reject malformed messages
 	return nil
 }
 
@@ -77,16 +52,16 @@ func (msg SpendMsg) GetSignBytes() []byte {
 	return b
 }
 
-// Implements Msg.
+/*
+ * Implements sdk.Msg
+ * Who should sign and authenticate this SpendMsg?
+*/
 func (msg SpendMsg) GetSigners() []sdk.AccAddress {
-	addrs := make([]sdk.AccAddress, 1)
-	addrs[0] = sdk.AccAddress(msg.Owner0.Bytes())
-	if utils.ValidAddress(msg.Owner1) {
-		addrs = append(addrs, sdk.AccAddress(msg.Owner1.Bytes()))
-	}
-	return addrs
+	// TODO: Implement GetSigners to return the addresses that need to sign this msg.
+	return nil
 }
 
+/*
 func (msg SpendMsg) Inputs() []utxo.Input {
 	inputs := []utxo.Input{utxo.Input{
 		Owner:    msg.Owner0.Bytes(),
@@ -109,22 +84,26 @@ func (msg SpendMsg) Outputs() []utxo.Output {
 	}
 	return outputs
 }
+*/
 
 //----------------------------------------
 // BaseTx
 var _ sdk.Tx = BaseTx{}
 
+// What additional fields are necessary to authenticate a SpendMsg
 type BaseTx struct {
-	Msg        SpendMsg
-	Signatures [2][65]byte
+	SpendMsg
+	// TODO: Add additional authentication fields
 }
 
-func NewBaseTx(msg SpendMsg, sigs [2][65]byte) BaseTx {
+// TODO: Create tx constructor
+func NewBaseTx() BaseTx {
 	return BaseTx{
-		Msg:        msg,
-		Signatures: sigs,
 	}
 }
 
-func (tx BaseTx) GetMsgs() []sdk.Msg         { return []sdk.Msg{tx.Msg} }
-func (tx BaseTx) GetSignatures() [2][65]byte { return tx.Signatures }
+// Implements sdk.Tx. Since BaseTx has only one message we return in in array
+func (tx BaseTx) GetMsgs() []sdk.Msg         { return []sdk.Msg{tx.SpendMsg} }
+
+// TODO: Implement GetSignatures
+func (tx BaseTx) GetSignatures()  {}

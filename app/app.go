@@ -97,12 +97,8 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 		app.capKeyPlasmaStore,
 	)
 
-	app.Router().
-		AddRoute("spend", utxo.NewSpendHandler(app.utxoMapper, app.nextPosition))
-
-	app.MountStoresIAVL(app.capKeyMainStore)
-	app.MountStoresIAVL(app.capKeyPlasmaStore)
-
+	// TODO: Add routers and mount stores into baseapp
+	
 	app.SetInitChainer(app.initChainer)
 	app.SetEndBlocker(app.endBlocker)
 
@@ -112,6 +108,7 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 		panic(err)
 	}
 
+	// Init Plasma Client
 	plasmaClient, err := eth.InitPlasma(app.rootchain, app.validatorPrivKey, client, app.BaseApp.Logger, app.blockFinality)
 	if err != nil {
 		panic(err)
@@ -119,9 +116,8 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 
 	app.ethConnection = plasmaClient
 
-	// NOTE: type AnteHandler func(ctx Context, tx Tx) (newCtx Context, result Result, abort bool)
-	app.SetAnteHandler(auth.NewAnteHandler(app.utxoMapper, app.plasmaStore, app.ethConnection))
-
+	// TODO: Initialize AnteHandler
+	
 	err = app.LoadLatestVersion(app.capKeyMainStore)
 	if err != nil {
 		cmn.Exit(err.Error())
@@ -136,7 +132,6 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 
 func (app *ChildChain) initChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	stateJSON := req.AppStateBytes
-	// TODO is this now the whole genesis file?
 
 	var genesisState GenesisState
 	err := app.cdc.UnmarshalJSON(stateJSON, &genesisState)
@@ -161,15 +156,10 @@ func (app *ChildChain) initChainer(ctx sdk.Context, req abci.RequestInitChain) a
 }
 
 func (app *ChildChain) endBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
-	// reset txIndex and fee
-	app.txIndex = 0
+	// TODO: Endblocker cleanup code. Reset important values and add DataHash to plasmaStore
+	// so that clients can easily query past DataHashes (merkle root of transaction tree)
+	// This is necessary since exitting from sidechain requires submiitting tx's Merkle proof of Inclusion
 
-	blknumKey := make([]byte, binary.MaxVarintLen64)
-	binary.PutUvarint(blknumKey, uint64(ctx.BlockHeight()))
-	key := append(utils.RootHashPrefix, blknumKey...)
-	if ctx.BlockHeader().DataHash != nil {
-		app.plasmaStore.Set(ctx, key, ctx.BlockHeader().DataHash)
-	}
 	return abci.ResponseEndBlock{}
 }
 
