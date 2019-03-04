@@ -77,7 +77,8 @@ func NewAnteHandler(utxoMapper utxo.Mapper, plasmaStore kvstore.KVStore, plasmaC
 
 		}
 
-		// TODO: tx tags (?)
+		// TODO: Check that total balance of Inputs == total balance of Outputs
+
 		return ctx, sdk.Result{}, false // continue...
 	}
 }
