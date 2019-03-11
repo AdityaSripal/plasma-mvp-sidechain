@@ -63,7 +63,7 @@ func TestSubmitBlock(t *testing.T) {
 	header := crypto.Keccak256([]byte("blah"))
 	var root [32]byte
 	copy(root[:], header)
-	_, err := plasma.SubmitBlock(root, big.NewInt(0), big.NewInt(0))
+	_, err := plasma.SubmitBlock(root, big.NewInt(0))
 	if err != nil {
 		t.Fatal("Failed block submission -", err)
 	}
@@ -184,7 +184,7 @@ func TestDepositExitWatching(t *testing.T) {
 	}
 
 	plasma.session.TransactOpts.Value = big.NewInt(minExitBond)
-	_, err = plasma.session.StartDepositExit(nonce, big.NewInt(0))
+	_, err = plasma.session.StartDepositExit(nonce)
 	if err != nil {
 		t.Fatal("Error starting deposit exit -", err)
 	}
@@ -205,18 +205,15 @@ type SpendMsg struct {
 	Oindex0           uint8
 	DepositNum0       uint64
 	Owner0            common.Address
-	Input0ConfirmSigs [][65]byte
 	Blknum1           uint64
 	Txindex1          uint16
 	Oindex1           uint8
 	DepositNum1       uint64
-	OWner1            common.Address
-	Input1ConfirmSigs [][65]byte
+	Owner1            common.Address
 	Newowner0         common.Address
 	Amount0           uint64
 	Newowner1         common.Address
 	Amount1           uint64
-	FeeAmount         uint64
 }
 
 type tx struct {
@@ -250,6 +247,7 @@ func TestTxExitWatchingAndChallenge(t *testing.T) {
 	// generate tx
 	var msg SpendMsg
 	msg.DepositNum0 = nonce.Uint64()
+	msg.Owner0 = crypto.PubkeyToAddress(privKey.PublicKey)
 	msg.Newowner0 = crypto.PubkeyToAddress(privKey.PublicKey)
 	msg.Amount0 = 10
 	txList, _ := rlp.EncodeToBytes(msg)
@@ -264,7 +262,7 @@ func TestTxExitWatchingAndChallenge(t *testing.T) {
 	// submit header. header == merklehash
 	header := sha256.Sum256(txBytes)
 	plasma.session.TransactOpts.Value = nil
-	_, err = plasma.SubmitBlock(header, big.NewInt(1), zero)
+	_, err = plasma.SubmitBlock(header, big.NewInt(1))
 	if err != nil {
 		t.Fatal("Error submitting block -", err)
 	}
@@ -280,7 +278,7 @@ func TestTxExitWatchingAndChallenge(t *testing.T) {
 	confirmSignature, _ := crypto.Sign(confHash, privKey)
 
 	plasma.session.TransactOpts.Value = big.NewInt(minExitBond)
-	_, err = plasma.session.StartTransactionExit([3]*big.Int{plasma.blockNum, zero, zero}, txBytes, []byte{}, confirmSignature, zero)
+	_, err = plasma.session.StartTransactionExit([3]*big.Int{plasma.blockNum, zero, zero}, txBytes, []byte{}, confirmSignature)
 	if err != nil {
 		t.Fatal("Error starting tx exit -", err)
 	}
@@ -294,7 +292,7 @@ func TestTxExitWatchingAndChallenge(t *testing.T) {
 
 	// attempt to exit the deposit & challenge
 	depositPos := [4]*big.Int{zero, zero, zero, nonce}
-	_, err = plasma.session.StartDepositExit(nonce, zero)
+	_, err = plasma.session.StartDepositExit(nonce)
 	if err != nil {
 		t.Fatal("Error exiting deposit -", err)
 	}
