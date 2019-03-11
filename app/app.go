@@ -98,7 +98,7 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 	)
 
 	// TODO: Add routers and mount stores into baseapp
-	
+
 	app.SetInitChainer(app.initChainer)
 	app.SetEndBlocker(app.endBlocker)
 
@@ -117,7 +117,7 @@ func NewChildChain(logger log.Logger, db dbm.DB, traceStore io.Writer, options .
 	app.ethConnection = plasmaClient
 
 	// TODO: Initialize AnteHandler
-	
+
 	err = app.LoadLatestVersion(app.capKeyMainStore)
 	if err != nil {
 		cmn.Exit(err.Error())

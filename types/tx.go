@@ -22,7 +22,7 @@ import (
  * In regular transaction UTXOs, the first 2 fields are filled in and DepositNum is 0.
  * If the UTXO is a deposit UTXO, then first 3 fields are 0 and DepositNum corresponds to the deposit nonce on rootchain
  * SpendMsg implements sdk.Msg and utxo.SpendMsg
-*/
+ */
 type SpendMsg struct {
 	// TODO: fill in fields
 }
@@ -37,9 +37,9 @@ func (msg SpendMsg) Route() string { return "spend" }
  * Implements sdk.Msg
  * Performs Basic stateless validation of our message
  * What would constitute an invalid (or malformed) message?
-*/
+ */
 func (msg SpendMsg) ValidateBasic() sdk.Error {
-    // TODO: Implement ValidateBasic to reject malformed messages
+	// TODO: Implement ValidateBasic to reject malformed messages
 	return nil
 }
 
@@ -55,7 +55,7 @@ func (msg SpendMsg) GetSignBytes() []byte {
 /*
  * Implements sdk.Msg
  * Who should sign and authenticate this SpendMsg?
-*/
+ */
 func (msg SpendMsg) GetSigners() []sdk.AccAddress {
 	// TODO: Implement GetSigners to return the addresses that need to sign this msg.
 	return nil
@@ -98,12 +98,11 @@ type BaseTx struct {
 
 // TODO: Create tx constructor
 func NewBaseTx() BaseTx {
-	return BaseTx{
-	}
+	return BaseTx{}
 }
 
 // Implements sdk.Tx. Since BaseTx has only one message we return in in array
-func (tx BaseTx) GetMsgs() []sdk.Msg         { return []sdk.Msg{tx.SpendMsg} }
+func (tx BaseTx) GetMsgs() []sdk.Msg { return []sdk.Msg{tx.SpendMsg} }
 
 // TODO: Implement GetSignatures
-func (tx BaseTx) GetSignatures()  {}
+func (tx BaseTx) GetSignatures() {}

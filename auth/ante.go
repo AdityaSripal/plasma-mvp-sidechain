@@ -50,7 +50,6 @@ func NewAnteHandler(utxoMapper utxo.Mapper, plasmaStore kvstore.KVStore, plasmaC
 			utxoMapper.ReceiveUTXO(ctx, inputUTXO)
 		}
 
-		
 		// Verify the second input
 		if utils.ValidAddress(spendMsg.Owner1) {
 			// TODO: Check signatures
@@ -102,7 +101,7 @@ func processSig(
 // Checks that utxo at the position specified exists, matches the address in the SpendMsg
 // and returns the denomination associated with the utxo
 func checkUTXO(ctx sdk.Context, plasmaClient *eth.Plasma, mapper utxo.Mapper, position types.PlasmaPosition, addr common.Address) sdk.Result {
-	
+
 	// TODO: Check that either UTXO exists in the sidechain's UTXO store and is unspent
 	// OR if input is a deposit, then check that the deposit with corresponding
 	// nonce has been finalized already on rootchain
