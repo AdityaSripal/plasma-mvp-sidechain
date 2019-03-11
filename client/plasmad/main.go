@@ -45,12 +45,11 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 	isValidator := viper.GetBool("is_validator")
 	rootchain := viper.GetString("ethereum_rootchain")
 	nodeURL := viper.GetString("ethereum_nodeurl")
-	minFees := viper.GetString("minimum_fees")
 	key_file = viper.GetString(cli.HomeFlag) + "/config/" + key_file
 	finality := viper.GetString("ethereum_finality")
 
 	return app.NewChildChain(logger, db, traceStore,
-		app.SetEthConfig(isValidator, key_file, rootchain, nodeURL, minFees, finality),
+		app.SetEthConfig(isValidator, key_file, rootchain, nodeURL, finality),
 	)
 }
 

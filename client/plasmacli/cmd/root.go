@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"github.com/spf13/viper"	
 )
 
 var homeDir string = os.ExpandEnv("$HOME/.plasmacli/keys")
