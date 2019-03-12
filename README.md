@@ -13,6 +13,12 @@ This is a tutorial version of the FourthState PlasmaMVP implementation. It is sp
 
 The unfinished tutorial can be found [here](https://github.com/AdityaSripal/plasma-mvp-sidechain/tree/tutorial-unfinished) for those that want to follow along during the workshop.
 
+Install golang: https://golang.org/doc/install
+
+Install dep: https://github.com/golang/dep#installation
+
+Install truffle/ganache-cli: `npm install -g truffle@4.1.14 ganache-cli@6.2.3`
+
 **Note**: This sidechain is being constructed to be compatible with our [rootchain contract](https://github.com/FourthState/plasma-mvp-rootchain/master)  
 
 ## Overview
